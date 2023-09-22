@@ -7,7 +7,8 @@
 #include "esp_event.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
-
+#include "esp_system.h"
+#include "esp_netif.h"
 #include "lwip/err.h"
 #include "lwip/sys.h"
 #include "lwip/sockets.h"
@@ -150,6 +151,16 @@ httpd_handle_t setup_server(void)
 
     return server;
 }
+void get_and_print_ip_address() {
+    esp_netif_t *netif_ap = esp_netif_get_handle_from_ifkey("WIFI_AP_DEF");
+    if (netif_ap != NULL) {
+        esp_netif_ip_info_t ip_info;
+        esp_netif_get_ip_info(netif_ap, &ip_info);
+        printf("IP Address: %s\n", ip4addr_ntoa(&ip_info.ip));
+    } else {
+        printf("Failed to obtain AP interface\n");
+    }
+}
 
 void app_main(void)
 {
@@ -168,10 +179,13 @@ void app_main(void)
      ESP_LOGI(TAG, "LED Control Web Server is running ... ...");
 
     httpd_handle_t server = setup_server();
+    get_and_print_ip_address();
 
     while (1) {
         // In this loop, you can add any other functionality you need.
         vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay for 1 second
+        
+
     }
 
     // Clean up and stop the server when necessary
