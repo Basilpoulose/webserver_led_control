@@ -156,7 +156,7 @@ void get_and_print_ip_address() {
     if (netif_ap != NULL) {
         esp_netif_ip_info_t ip_info;
         esp_netif_get_ip_info(netif_ap, &ip_info);
-        printf("IP Address: %s\n", ip4addr_ntoa(&ip_info.ip));
+        printf("IP Address: %s\n", ip4addr_ntoa((const ip4_addr_t*)&ip_info.ip));
     } else {
         printf("Failed to obtain AP interface\n");
     }
@@ -175,7 +175,6 @@ void app_main(void)
     ESP_LOGI(TAG, "ESP_WIFI_MODE_AP");
     wifi_init_softap();
     gpio_set_direction(LED_PIN, GPIO_MODE_OUTPUT);
-    int led_state = 0;
      ESP_LOGI(TAG, "LED Control Web Server is running ... ...");
 
     httpd_handle_t server = setup_server();
